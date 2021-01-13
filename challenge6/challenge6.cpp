@@ -97,7 +97,7 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
         string right_side = input.substr(input.find('=') + 1);
         
         if(right_side.find('(') != string::npos){
-        right_side = paranthesis(right_side, name_vec, value_vec);
+            right_side = paranthesis(right_side, name_vec, value_vec);
         }
         if(right_side.find('*') != string::npos){
             right_side = multiply(right_side, name_vec, value_vec);
