@@ -206,18 +206,18 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec){
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0.0;
+    auto sum = 0.0; int sumi;
     int first_index;
     int last_index;
 
     //getting right side of '+'
-    for(int i = index + 1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i++){
+    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '+'
-    for(int i = index-1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i--){
+    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -255,16 +255,22 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec){
     //calculate
     sum = right_value + left_value;
 
-    //check if sum is integer or double
-    if(is_integer(sum)){
-        sum = double_to_int(sum);
+    if(left_str.find('.') != string::npos || right_str.find('.') != string::npos){
+        //turn sum into a string
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
+    }
+    else{
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+        convert>>ready;
     }
 
-    //turn sum into a string
-    convert.clear();
-    convert<<sum;
-    convert>>ready;
-    //modifi the input string
+
+    //modify the input string
     int length = last_index - first_index + 1;
     input.erase(first_index, length);
     input.insert(first_index, ready);
@@ -285,18 +291,18 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0.0;
+    auto sum = 0.0; int sumi;
     int first_index;
     int last_index;
 
     //getting right side of '-'
-    for(int i = index + 1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i++){
+    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '+'
-    for(int i = index-1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i--){
+    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -334,16 +340,20 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
     //calculate
     sum = left_value - right_value;
 
-    //check if sum is integer or double
-    if(is_integer(sum)){
-        sum = double_to_int(sum);
+    if(left_str.find('.') != string::npos || right_str.find('.') != string::npos){
+        //turn sum into a string
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
     }
-
-    //turn sum into a string
-    convert.clear();
-    convert<<sum;
-    convert>>ready;
-    //modifi the input string
+    else{
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+        convert>>ready;
+    }
+    //modify the input string
     int length = last_index - first_index + 1;
     input.erase(first_index, length);
     input.insert(first_index, ready);
@@ -363,18 +373,18 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0.0;
+    auto sum = 0.0; int sumi;
     int first_index;
     int last_index;
 
     //getting right side of '*'
-    for(int i = index + 1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i++){
+    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '*'
-    for(int i = index-1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i--){
+    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -412,16 +422,20 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
     //calculate
     sum = right_value * left_value;
 
-    //check if sum is integer or double
-    if(is_integer(sum)){
-        sum = double_to_int(sum);
+    if(left_str.find('.') != string::npos || right_str.find('.') != string::npos){
+        //turn sum into a string
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
     }
-
-    //turn sum into a string
-    convert.clear();
-    convert<<sum;
-    convert>>ready;
-    //modifi the input string
+    else{
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+        convert>>ready;
+    }
+    //modify the input string
     int length = last_index - first_index + 1;
     input.erase(first_index, length);
     input.insert(first_index, ready);
@@ -441,18 +455,18 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec)
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0.0;
+    auto sum = 0.0; int sumi;
     int first_index;
     int last_index;
 
     //getting right side of '/'
-    for(int i = index + 1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i++){
+    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '/'
-    for(int i = index-1; input[i] >=( int)'A' && input[i] <= (int)'Z' || input[i] >= '0' && input[i] <='9'; i--){
+    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -490,16 +504,20 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec)
     //calculate
     sum = left_value / right_value;
 
-    //check if sum is integer or double
-    if(is_integer(sum)){
-        sum = double_to_int(sum);
+    if(left_str.find('.') != string::npos || right_str.find('.') != string::npos){
+        //turn sum into a string
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
     }
-
-    //turn sum into a string
-    convert.clear();
-    convert<<sum;
-    convert>>ready;
-    //modifi the input string
+    else{
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+        convert>>ready;
+    }
+    //modify the input string
     int length = last_index - first_index + 1;
     input.erase(first_index, length);
     input.insert(first_index, ready);
