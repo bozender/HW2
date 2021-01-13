@@ -13,13 +13,13 @@ int search(string, vector<string>&);
 bool is_integer(double);
 int double_to_int(double);
 bool is_variable(string);
-
 //math functions
-string add(string input, vector<string> &name_vec, vector<double> &value_vec);
-string substract(string input, vector<string> &name_vec, vector<double> &value_vec);
-string multiply(string input, vector<string> &name_vec, vector<double> &value_vec);
-string divide(string input, vector<string> &name_vec, vector<double> &value_vec);
-
+string add(string, vector<string>&, vector<double>&);
+string substract(string, vector<string>&, vector<double>&);
+string multiply(string, vector<string>&, vector<double> &);
+string divide(string , vector<string>&, vector<double>&);
+//function for detect precedense with paranthesis
+string paranthesis(string , vector<string>&, vector<double>&);
 
 int main(){
 
@@ -112,6 +112,36 @@ int search(string a, vector<string>& vec){
         }
     }
     return -1;
+}
+
+string paranthesis(string input, vector<string> &name_vec, vector<double> &value_vec){
+    
+    int first_index = input.find('(');
+    int last_index = input.find(')');
+    int length = last_index - first_index + 1;
+    
+    string ready = input.substr(first_index +1, length - 2);
+
+    if(ready.find('*') != string::npos){
+        ready = multiply(ready, name_vec, value_vec);
+    }
+    if(ready.find('/') != string::npos){
+        ready = divide(ready, name_vec, value_vec);
+    }
+    if(ready.find('+') != string::npos){
+        ready = add(ready, name_vec, value_vec);
+    }
+    if(ready.find('-') != string::npos){
+        ready =substract(ready, name_vec, value_vec);
+    }
+
+    //modify the input string
+    input.erase(first_index, length);
+    input.insert(first_index, ready);
+
+    return input;
+
+
 }
 
 string add(string input, vector<string> &name_vec, vector<double> &value_vec){
