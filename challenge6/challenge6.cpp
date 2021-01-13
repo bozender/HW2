@@ -206,7 +206,7 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec){
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0;
+    auto sum = 0.0;
     int first_index;
     int last_index;
 
@@ -285,7 +285,7 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0;
+    auto sum = 0.0;
     int first_index;
     int last_index;
 
@@ -363,7 +363,7 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0;
+    auto sum = 0.0;
     int first_index;
     int last_index;
 
@@ -441,7 +441,7 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec)
 
     double left_value = 0;
     double right_value = 0;
-    auto sum = 0;
+    auto sum = 0.0;
     int first_index;
     int last_index;
 
