@@ -35,7 +35,7 @@ int main(){
         }
         TempFile<<endl;
     }
-
+    cout<<input_string;
     InputFile.close();
     InputFile.open("temp.inp");
 

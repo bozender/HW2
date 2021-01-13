@@ -35,7 +35,7 @@ int main(){
         }
         TempFile<<endl;
     }
-
+    
     InputFile.close();
     InputFile.open("temp.inp");
 
