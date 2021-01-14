@@ -98,9 +98,7 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
     string left_side;
     string right_side;
 
-   
     if(input.find('=') != string::npos){
-
         left_side = input.substr(0, input.find('='));
         right_side = input.substr(input.find('=') + 1);
 
@@ -114,6 +112,7 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
             else if(right_side.find('*') != string::npos){
                 right_side = multiply(right_side, name_vec, value_vec, is_double);
             }
+
             else if(right_side.find('/') != string::npos){
                 right_side = divide(right_side, name_vec, value_vec, is_double);
             }
@@ -126,39 +125,34 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
                 break;
             }
         }
-            //convert right_side string to a double
-            for(int i = 0; i< right_side.size(); i++){
-                if(right_side[i] >='0' && right_side[i] <='9'){
-                    convert.str(right_side);
-                    convert>>value;
-                    convert.clear();
-                }
+        //convert right_side string to a double
+        for(int i = 0; i< right_side.size(); i++){
+            if(right_side[i] >='0' && right_side[i] <='9'){
+                convert.str(right_side);
+                convert>>value;
+                convert.clear();
             }
-            //create variable if does not exist
-            if(search(left_side, name_vec) == -1){
-                name_vec.push_back(left_side);
-                value_vec.push_back(value);
-                //determine if input is double
-                if(right_side.find('.') != string::npos){
-                    is_double.push_back(true);
-                }else{
-                    is_double.push_back(false);
-                }
+        }
+        //create variable if does not exist
+        if(search(left_side, name_vec) == -1){
+            name_vec.push_back(left_side);
+            value_vec.push_back(value);
+            //determine if input is double
+            if(right_side.find('.') != string::npos){
+                is_double.push_back(true);
             }else{
-                value_vec[search(left_side, name_vec)] = value;
-                if(right_side.find('.') != string::npos){
-                    is_double[search(left_side, name_vec)] = true;
-                }else{
-                    is_double[search(left_side, name_vec)] = false;
-                }
+                is_double.push_back(false);
             }
-
-
-            /*for(int i=0; i<name_vec.size(); i++){
-                cout<<"vec ["<<i<<"]"<<"  "<<name_vec[i]<<":  "<<value_vec[i]<<"  "<<is_double[i]<<endl;
-            }*/
-        
+        }else{
+            value_vec[search(left_side, name_vec)] = value;
+            if(right_side.find('.') != string::npos){
+                is_double[search(left_side, name_vec)] = true;
+            }else{
+                is_double[search(left_side, name_vec)] = false;
+            }
+        }
     }
+            
     if(input.find("OUT") != string::npos){
 
         int variable_index = search(input.substr(input.find("OUT") + 3), name_vec);
@@ -168,8 +162,7 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
         OutputFile<<to_print<<endl;
 
     }
-
-
+    
 }
 
 bool is_integer(double a){
@@ -201,7 +194,7 @@ string paranthesis(string input, vector<string> &name_vec, vector<double> &value
     int last_index = input.find(')');
     int length = last_index - first_index + 1;
     string ready = input.substr(first_index + 1, length - 2);
-    
+
     while(ready.find('(') != string::npos || ready.find('+') != string::npos ||
         ready.find('-') != string::npos || ready.find('*') != string::npos ||
             ready.find('/') != string::npos){
@@ -209,9 +202,9 @@ string paranthesis(string input, vector<string> &name_vec, vector<double> &value
         if(ready.find('(') != string::npos){
             ready = paranthesis(ready, name_vec, value_vec, is_double);
         }
-         else if(ready.find('*') != string::npos){
+        else if(ready.find('*') != string::npos){
             ready = multiply(ready, name_vec, value_vec, is_double);
-            }
+        }
          else if(ready.find('/') != string::npos){
             ready = divide(ready, name_vec, value_vec, is_double);
         }
@@ -220,11 +213,11 @@ string paranthesis(string input, vector<string> &name_vec, vector<double> &value
         }
         else if(ready.find('-') != string::npos){
             ready =substract(ready, name_vec, value_vec, is_double);
-        }else{
-                break;
+        }
+        else{
+            break;
         }
     }
-
     //modify the input string
     input.erase(first_index, length);
     input.insert(first_index, ready);
@@ -286,12 +279,9 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec,  v
 
     }else{
 
-        convert.clear();
-        
-        convert.str(right_str);
-        
+        convert.clear(); 
+        convert.str(right_str);      
         convert >> right_value;
-        
 
     }
 
@@ -300,26 +290,23 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec,  v
 
 
 
-    if(search(left_str, name_vec) != -1 || search(right_str, name_vec) != -1){
-        if(is_double[search(left_str, name_vec)] || is_double[search(right_str, name_vec)]){
-            //turn sum into a string
-            ready.clear();
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
-        }
-        else{
-            ready.clear();
-            sumi = sum;
-            //turn sum into a string
-            convert.clear();
-            convert<<sumi;
+    if( (search(left_str, name_vec) != -1 && is_double[search(left_str, name_vec)]) || (search(right_str, name_vec) != -1 && is_double[search(right_str, name_vec)]) ){
+        
+        //turn sum into a string
+        ready.clear();
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
 
-        }
-    }else{
-            ready.clear();
-            convert.clear();
-            convert<<sum;
+    }
+    else{
+
+        ready.clear();
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+
     }
     //modify the input string
     int length = last_index - first_index + 1;
@@ -355,11 +342,15 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
     
     //getting left side of '-'
     for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
+
         temp.push_back(input[i]);
         first_index = i;
+
     }
     for(int i = temp.size()-1; i>=0; i--){
+        
         left_str.push_back(temp[i]);
+
     }
     //check if left is a variable. if it is, get it's value. if not, read the number
     if(search(left_str, name_vec) != -1){
@@ -391,30 +382,28 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
     //calculate
     sum = left_value - right_value;
 
-    if(search(left_str, name_vec) != -1 || search(right_str, name_vec) != -1){
-        if(is_double[search(left_str, name_vec)] || is_double[search(right_str, name_vec)]){
-            //turn sum into a string
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
-        }
-        else{
-            sumi = sum;
-            //turn sum into a string
-            convert.clear();
-            convert<<sumi;
-            convert>>ready;
-        }
-    }else{
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
+    if( (search(left_str, name_vec) != -1 && is_double[search(left_str, name_vec)]) || (search(right_str, name_vec) != -1 && is_double[search(right_str, name_vec)]) ){
+        
+        //turn sum into a string
+        ready.clear();
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
     }
+    else{
 
+        ready.clear();
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+
+    }
     //modify the input string
     int length = last_index - first_index + 1;
+    
     input.erase(first_index, length);
-    input.insert(first_index, ready);
+    input.insert(first_index, convert.str());
 
     return input;
 
@@ -437,19 +426,25 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
     int first_index;
     int last_index;
 
-    //getting right side of '+'
+    //getting right side of '*'
     for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
+        
         right_str.push_back(input[i]);
         last_index = i;
+
     }
     
     //getting left side of '*'
     for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
+
         temp.push_back(input[i]);
         first_index = i;
+
     }
     for(int i = temp.size()-1; i>=0; i--){
+
         left_str.push_back(temp[i]);
+
     }
     //check if left is a variable. if it is, get it's value. if not, read the number
     if(search(left_str, name_vec) != -1){
@@ -462,6 +457,7 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
         convert.clear();
         convert.str(left_str);
         convert >> left_value;
+
     }
 
     //check if right is a variable. if it is, get it's value. if not, read the number
@@ -481,30 +477,29 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
     //calculate
     sum = left_value * right_value;
 
-    if(search(left_str, name_vec) != -1 || search(right_str, name_vec) != -1){
-        if(is_double[search(left_str, name_vec)] || is_double[search(right_str, name_vec)]){
-            //turn sum into a string
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
-        }
-        else{
-            sumi = sum;
-            //turn sum into a string
-            convert.clear();
-            convert<<sumi;
-            convert>>ready;
-        }
-    }else{
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
+    if( (search(left_str, name_vec) != -1 && is_double[search(left_str, name_vec)]) || (search(right_str, name_vec) != -1 && is_double[search(right_str, name_vec)]) ){
+        
+        //turn sum into a string
+        ready.clear();
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
+    }
+    else{
+
+        ready.clear();
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+
     }
 
     //modify the input string
     int length = last_index - first_index + 1;
+    
     input.erase(first_index, length);
-    input.insert(first_index, ready);
+    input.insert(first_index, convert.str());
 
     return input;
 
@@ -529,17 +524,23 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec,
 
     //getting right side of '/'
     for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
+
         right_str.push_back(input[i]);
         last_index = i;
+
     }
     
     //getting left side of '/'
     for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
+
         temp.push_back(input[i]);
         first_index = i;
+
     }
     for(int i = temp.size()-1; i>=0; i--){
+
         left_str.push_back(temp[i]);
+
     }
     //check if left is a variable. if it is, get it's value. if not, read the number
     if(search(left_str, name_vec) != -1){
@@ -571,30 +572,28 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec,
     //calculate
     sum = left_value / right_value;
 
-    if(search(left_str, name_vec) != -1 || search(right_str, name_vec) != -1){
-        if(is_double[search(left_str, name_vec)] || is_double[search(right_str, name_vec)]){
-            //turn sum into a string
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
-        }
-        else{
-            sumi = sum;
-            //turn sum into a string
-            convert.clear();
-            convert<<sumi;
-            convert>>ready;
-        }
-    }else{
-            convert.clear();
-            convert<<sum;
-            convert>>ready;
+    if( (search(left_str, name_vec) != -1 && is_double[search(left_str, name_vec)]) || (search(right_str, name_vec) != -1 && is_double[search(right_str, name_vec)]) ){
+        
+        //turn sum into a string
+        ready.clear();
+        convert.clear();
+        convert<<sum;
+        convert>>ready;
     }
+    else{
 
+        ready.clear();
+        sumi = sum;
+        //turn sum into a string
+        convert.clear();
+        convert<<sumi;
+        
+    }
     //modify the input string
     int length = last_index - first_index + 1;
+    
     input.erase(first_index, length);
-    input.insert(first_index, ready);
+    input.insert(first_index, convert.str());
 
     return input;
 
