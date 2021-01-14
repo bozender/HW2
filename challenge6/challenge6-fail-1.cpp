@@ -113,23 +113,19 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
             }
             else if(right_side.find('*') != string::npos){
                 right_side = multiply(right_side, name_vec, value_vec, is_double);
-                cout<<"right side: "<<right_side<<endl;
             }
             else if(right_side.find('/') != string::npos){
                 right_side = divide(right_side, name_vec, value_vec, is_double);
-                cout<<"right side: "<<right_side<<endl;
             }
             else if(right_side.find('+') != string::npos){
                 right_side = add(right_side, name_vec, value_vec, is_double);
-                cout<<"right side: "<<right_side<<endl;
             }
             else if(right_side.find('-') != string::npos){
                 right_side =substract(right_side, name_vec, value_vec, is_double);
-                cout<<"right side: "<<right_side<<endl;
             }else{
                 break;
             }
-        }//cout<<right_side<<endl;
+        }
             //convert right_side string to a double
             for(int i = 0; i< right_side.size(); i++){
                 if(right_side[i] >='0' && right_side[i] <='9'){
@@ -148,10 +144,19 @@ void calculate(string filename, string input, vector<string>& name_vec, vector<d
                 }else{
                     is_double.push_back(false);
                 }
+            }else{
+                value_vec[search(left_side, name_vec)] = value;
+                if(right_side.find('.') != string::npos){
+                    is_double[search(left_side, name_vec)] = true;
+                }else{
+                    is_double[search(left_side, name_vec)] = false;
+                }
             }
 
-            value_vec[search(left_side, name_vec)] = value;
-        
+
+            /*for(int i=0; i<name_vec.size(); i++){
+                cout<<"vec ["<<i<<"]"<<"  "<<name_vec[i]<<":  "<<value_vec[i]<<"  "<<is_double[i]<<endl;
+            }*/
         
     }
     if(input.find("OUT") != string::npos){
@@ -195,20 +200,29 @@ string paranthesis(string input, vector<string> &name_vec, vector<double> &value
     int first_index = input.find('(');
     int last_index = input.find(')');
     int length = last_index - first_index + 1;
+    string ready = input.substr(first_index + 1, length - 2);
     
-    string ready = input.substr(first_index +1, length - 2);
+    while(ready.find('(') != string::npos || ready.find('+') != string::npos ||
+        ready.find('-') != string::npos || ready.find('*') != string::npos ||
+            ready.find('/') != string::npos){
 
-    if(ready.find('*') != string::npos){
-        ready = multiply(ready, name_vec, value_vec, is_double);
-    }
-    if(ready.find('/') != string::npos){
-        ready = divide(ready, name_vec, value_vec, is_double);
-    }
-    if(ready.find('+') != string::npos){
-        ready = add(ready, name_vec, value_vec, is_double);
-    }
-    if(ready.find('-') != string::npos){
-        ready =substract(ready, name_vec, value_vec, is_double);
+        if(ready.find('(') != string::npos){
+            ready = paranthesis(ready, name_vec, value_vec, is_double);
+        }
+         else if(ready.find('*') != string::npos){
+            ready = multiply(ready, name_vec, value_vec, is_double);
+            }
+         else if(ready.find('/') != string::npos){
+            ready = divide(ready, name_vec, value_vec, is_double);
+        }
+        else if(ready.find('+') != string::npos){
+            ready = add(ready, name_vec, value_vec, is_double);
+        }
+        else if(ready.find('-') != string::npos){
+            ready =substract(ready, name_vec, value_vec, is_double);
+        }else{
+                break;
+        }
     }
 
     //modify the input string
@@ -237,13 +251,13 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec,  v
     int last_index;
 
     //getting right side of '+'
-    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
+    for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '+'
-    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
+    for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -258,9 +272,10 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec,  v
  
     }else{
 
-        convert.clear();cout<<"debugger"<<endl;
-        convert.str(left_str);cout<<"debugger"<<endl;
-        convert >> left_value;cout<<"debugger"<<endl;
+        convert.clear();
+        convert.str(left_str);
+        convert >> left_value;
+        
     }
 
     //check if right is a variable. if it is, get it's value. if not, read the number
@@ -271,47 +286,49 @@ string add(string input, vector<string> &name_vec, vector<double> &value_vec,  v
 
     }else{
 
-        convert.clear();cout<<"debugger"<<endl;
-        convert.str(right_str);cout<<"debugger"<<endl;
-        convert >> right_value;cout<<"debugger"<<endl;
+        convert.clear();
+        
+        convert.str(right_str);
+        
+        convert >> right_value;
+        
 
     }
 
     //calculate
     sum = left_value + right_value;
-    cout<<"sum:"<<sum<<endl;
+
+
 
     if(search(left_str, name_vec) != -1 || search(right_str, name_vec) != -1){
         if(is_double[search(left_str, name_vec)] || is_double[search(right_str, name_vec)]){
             //turn sum into a string
-            convert.clear();cout<<"debugger287"<<endl;
-            convert<<sum;cout<<"debugger288"<<endl;
-            convert>>ready;cout<<"debugger"<<endl;
+            ready.clear();
+            convert.clear();
+            convert<<sum;
+            convert>>ready;
         }
         else{
+            ready.clear();
             sumi = sum;
             //turn sum into a string
-            convert.clear();cout<<"debugger294"<<endl;
-            convert<<sumi;cout<<"debugger295"<<endl;
-            convert>>ready;cout<<"debugger296"<<endl;
+            convert.clear();
+            convert<<sumi;
+
         }
     }else{
-            convert.clear();cout<<"debugger299"<<endl;
-            convert<<sum;cout<<"debugger300"<<endl;
-            convert>>ready;cout<<"debugger301: "<<ready<<endl;
+            ready.clear();
+            convert.clear();
+            convert<<sum;
     }
     //modify the input string
     int length = last_index - first_index + 1;
+    
     input.erase(first_index, length);
-    cout<<"input: "<<input<<endl;
-    if(input.empty()){
-        cout<<"308 "<<ready<<endl;
-        return ready;
-    }else{
-        input.insert(first_index, ready);
-        cout<<"input: "<<input<<endl;
-        return input;
-    }
+    input.insert(first_index, convert.str());
+
+     return input;
+    
 }
 
 string substract(string input, vector<string> &name_vec, vector<double> &value_vec,  vector<bool>& is_double){
@@ -331,13 +348,13 @@ string substract(string input, vector<string> &name_vec, vector<double> &value_v
     int last_index;
 
     //getting right side of '-'
-    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
+    for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '-'
-    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
+    for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -421,13 +438,13 @@ string multiply(string input, vector<string> &name_vec, vector<double> &value_ve
     int last_index;
 
     //getting right side of '+'
-    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
+    for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '*'
-    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
+    for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
@@ -511,13 +528,13 @@ string divide(string input, vector<string> &name_vec, vector<double> &value_vec,
     int last_index;
 
     //getting right side of '/'
-    for(int i = index + 1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i++){
+    for(int i = index + 1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
         right_str.push_back(input[i]);
         last_index = i;
     }
     
     //getting left side of '/'
-    for(int i = index-1; input[i] >='A' && input[i] <='Z' || input[i] >='0' && input[i] <='9' || input[i]=='.'; i--){
+    for(int i = index-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
         temp.push_back(input[i]);
         first_index = i;
     }
