@@ -80,11 +80,11 @@ int main(){
                             else{
                                 calculate(input_string, variable_names, variable_values, is_double);
                             }
-
+                        }
                             if(input_string.find("OUT") != string::npos){
                                 print_out(filename, input_string, variable_names, variable_values);
                             }                            
-                        }
+                        
                     }
                     
                     InputFile.close();
@@ -136,7 +136,7 @@ void calculate(string input, vector<string>& name_vec, vector<double>& value_vec
             break;
         }
     }
-    //if right side is an existing variable, get it's value. if right side is numerical, convert it to a double
+    //if right side is an existing variable, get it's value. if it is numerical, convert it to a double
     if(search(right_side, name_vec) != -1){
         value = value_vec[search(right_side, name_vec)];
     }
@@ -165,6 +165,10 @@ void calculate(string input, vector<string>& name_vec, vector<double>& value_vec
             is_double[search(left_side, name_vec)] = false;
         }
     }
+
+    /*for(int i=0; i<name_vec.size(); i++){
+        cout<<"vec ["<<i<<"]"<<"  "<<name_vec[i]<<":  "<<value_vec[i]<<"  "<<is_double[i]<<endl;
+    }*/
 }
 
 void decide(string input, vector<string>& name_vec, vector<double>& value_vec, vector<bool>& is_double){
@@ -178,24 +182,24 @@ void decide(string input, vector<string>& name_vec, vector<double>& value_vec, v
     string temp;
     string condition_left;
     string condition_right;
-    string condition_str = input.substr(input.find("IF") + 2, input.find("THEN")- input.find("IF") - 3);
-    string then_str = input.substr(input.find("THEN") + 4, input.find("ELSE") - input.find("THEN")  -5);
+    string condition_str = input.substr(input.find("IF") + 2, input.find("THEN")- input.find("IF") - 2);
+    string then_str = input.substr(input.find("THEN") + 4, input.find("ELSE") - input.find("THEN")  -4);
     string else_str = input.substr(input.find("ELSE") + 4);
 
-    //getting right side of condition
-    for(int i = 0; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
-        condition_right.push_back(input[i]);
-    }  
     //getting left side of condition
-    for(int i = condition_str.size()-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
-        temp.push_back(input[i]);
+    for(int i = 0; (condition_str[i] >='A' && condition_str[i] <='Z') || (condition_str[i] >='0' && condition_str[i] <='9') || condition_str[i]=='.'; i++){
+        condition_left.push_back(condition_str[i]);
+    }
+    //getting right side of condition
+    for(int i = condition_str.size()-1; (condition_str[i] >='A' && condition_str[i] <='Z') || (condition_str[i] >='0' && condition_str[i] <='9') || input[i]=='.'; i--){
+        temp.push_back(condition_str[i]);
     }
     for(int i = temp.size()-1; i>=0; i--){
-        condition_left.push_back(temp[i]);
+        condition_right.push_back(temp[i]);
     }
     
-    if(condition_str.find("<") != string::npos){
-        if(condition_str.find("=") != string::npos){
+    if(condition_str.find('<') != string::npos){
+        if(condition_str.find('=') != string::npos){
             if(value_vec[search(condition_left, name_vec)] <= value_vec[search(condition_left, name_vec)]){
                 condition = true;
             }
@@ -213,8 +217,8 @@ void decide(string input, vector<string>& name_vec, vector<double>& value_vec, v
         }
     }
 
-    if(condition_str.find(">") != string::npos){
-        if(condition_str.find("=") != string::npos){
+    if(condition_str.find('>') != string::npos){
+        if(condition_str.find('=') != string::npos){
             if(value_vec[search(condition_left, name_vec)] >= value_vec[search(condition_left, name_vec)]){
                 condition = true;
             }
@@ -241,11 +245,15 @@ void decide(string input, vector<string>& name_vec, vector<double>& value_vec, v
         }
     }
 
+    input.erase(input.find('=')+1);
+
     if(condition){
-        calculate(then_str, name_vec, value_vec, is_double);
+        input.insert(input.size(), then_str);
+        calculate(input, name_vec, value_vec, is_double);
     }
     else{
-        calculate(else_str, name_vec, value_vec, is_double);
+        input.insert(input.size(), else_str);
+        calculate(input, name_vec, value_vec, is_double);
     }
 
 }
@@ -257,7 +265,7 @@ void print_out(string filename, string input, vector<string>& name_vec, vector<d
     int variable_index = search(input.substr(input.find("OUT") + 3), name_vec);
     auto to_print = value_vec[variable_index];
 
-    cout<<filename<<" "<<to_print<<endl;
+    cout<<filename<<" OUTPUT:"<<to_print<<endl;
     OutputFile<<to_print<<endl;
 }
 
