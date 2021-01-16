@@ -72,17 +72,18 @@ int main(){
                     //do all the calculations
                         if(input_string.find("=") != string::npos){
                             if(input_string.find("IF") != string::npos){
-
+                                decide(input_string, variable_names, variable_values, is_double);
                             }
                             else if(input_string.find("LOOP") != string::npos){
-                                
-                            }
-                            else if(input_string.find("OUT") != string::npos){
-                                print_out(filename, input_string, variable_names, variable_values);
+                                  
                             }
                             else{
                                 calculate(input_string, variable_names, variable_values, is_double);
                             }
+
+                            if(input_string.find("OUT") != string::npos){
+                                print_out(filename, input_string, variable_names, variable_values);
+                            }                            
                         }
                     }
                     
@@ -109,58 +110,61 @@ void calculate(string input, vector<string>& name_vec, vector<double>& value_vec
     string right_side;
 
 
-        left_side = input.substr(0, input.find('='));
-        right_side = input.substr(input.find('=') + 1);
+    left_side = input.substr(0, input.find('='));
+    right_side = input.substr(input.find('=') + 1);
 
-        while(right_side.find('(') != string::npos || right_side.find('+') != string::npos ||
-            right_side.find('-') != string::npos || right_side.find('*') != string::npos ||
-            right_side.find('/') != string::npos){
+    while(right_side.find('(') != string::npos || right_side.find('+') != string::npos ||
+        right_side.find('-') != string::npos || right_side.find('*') != string::npos ||
+        right_side.find('/') != string::npos){
 
-            if(right_side.find('(') != string::npos){
-                right_side = paranthesis(right_side, name_vec, value_vec, is_double);
-            }
-            else if(right_side.find('*') != string::npos){
-                right_side = multiply(right_side, name_vec, value_vec, is_double);
-            }
-
-            else if(right_side.find('/') != string::npos){
-                right_side = divide(right_side, name_vec, value_vec, is_double);
-            }
-            else if(right_side.find('+') != string::npos){
-                right_side = add(right_side, name_vec, value_vec, is_double);
-            }
-            else if(right_side.find('-') != string::npos){
-                right_side =substract(right_side, name_vec, value_vec, is_double);
-            }else{
-                break;
-            }
+        if(right_side.find('(') != string::npos){
+            right_side = paranthesis(right_side, name_vec, value_vec, is_double);
         }
-        //convert right_side string to a double
-        for(int i = 0; i< right_side.size(); i++){
-            if(right_side[i] >='0' && right_side[i] <='9'){
-                convert.str(right_side);
-                convert>>value;
-                convert.clear();
-            }
+        else if(right_side.find('*') != string::npos){
+            right_side = multiply(right_side, name_vec, value_vec, is_double);
         }
-        //create variable if does not exist
-        if(search(left_side, name_vec) == -1){
-            name_vec.push_back(left_side);
-            value_vec.push_back(value);
-            //determine if input is double
-            if(right_side.find('.') != string::npos){
-                is_double.push_back(true);
-            }else{
-                is_double.push_back(false);
-            }
+
+        else if(right_side.find('/') != string::npos){
+            right_side = divide(right_side, name_vec, value_vec, is_double);
+        }
+        else if(right_side.find('+') != string::npos){
+            right_side = add(right_side, name_vec, value_vec, is_double);
+        }
+        else if(right_side.find('-') != string::npos){
+            right_side =substract(right_side, name_vec, value_vec, is_double);
         }else{
-            value_vec[search(left_side, name_vec)] = value;
-            if(right_side.find('.') != string::npos){
-                is_double[search(left_side, name_vec)] = true;
-            }else{
-                is_double[search(left_side, name_vec)] = false;
-            }
+            break;
         }
+    }
+    //if right side is an existing variable, get it's value. if right side is numerical, convert it to a double
+    if(search(right_side, name_vec) != -1){
+        value = value_vec[search(right_side, name_vec)];
+    }
+    else{
+        for(int i = 0; i< right_side.size(); i++){
+            convert.clear();
+            convert.str(right_side);
+            convert>>value;
+        }
+    }
+    //create variable if does not exist
+    if(search(left_side, name_vec) == -1){
+        name_vec.push_back(left_side);
+        value_vec.push_back(value);
+        //determine if input is double
+        if(right_side.find('.') != string::npos){
+            is_double.push_back(true);
+        }else{
+            is_double.push_back(false);
+        }
+    }else{
+        value_vec[search(left_side, name_vec)] = value;
+        if(right_side.find('.') != string::npos){
+            is_double[search(left_side, name_vec)] = true;
+        }else{
+            is_double[search(left_side, name_vec)] = false;
+        }
+    }
 }
 
 void decide(string input, vector<string>& name_vec, vector<double>& value_vec, vector<bool>& is_double){
@@ -170,13 +174,79 @@ void decide(string input, vector<string>& name_vec, vector<double>& value_vec, v
     }
 
     bool condition;
-
+    
+    string temp;
+    string condition_left;
+    string condition_right;
     string condition_str = input.substr(input.find("IF") + 2, input.find("THEN")- input.find("IF") - 3);
     string then_str = input.substr(input.find("THEN") + 4, input.find("ELSE") - input.find("THEN")  -5);
     string else_str = input.substr(input.find("ELSE") + 4);
 
+    //getting right side of condition
+    for(int i = 0; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i++){
+        condition_right.push_back(input[i]);
+    }  
+    //getting left side of condition
+    for(int i = condition_str.size()-1; (input[i] >='A' && input[i] <='Z') || (input[i] >='0' && input[i] <='9') || input[i]=='.'; i--){
+        temp.push_back(input[i]);
+    }
+    for(int i = temp.size()-1; i>=0; i--){
+        condition_left.push_back(temp[i]);
+    }
     
+    if(condition_str.find("<") != string::npos){
+        if(condition_str.find("=") != string::npos){
+            if(value_vec[search(condition_left, name_vec)] <= value_vec[search(condition_left, name_vec)]){
+                condition = true;
+            }
+            else{
+                condition = false;
+            }
+        }
+        else{
+            if(value_vec[search(condition_left, name_vec)] < value_vec[search(condition_left, name_vec)]){
+                condition = true;
+            }
+            else{
+                condition = false;
+            }
+        }
+    }
 
+    if(condition_str.find(">") != string::npos){
+        if(condition_str.find("=") != string::npos){
+            if(value_vec[search(condition_left, name_vec)] >= value_vec[search(condition_left, name_vec)]){
+                condition = true;
+            }
+            else{
+                condition = false;
+            }
+        }
+        else{
+            if(value_vec[search(condition_left, name_vec)] > value_vec[search(condition_left, name_vec)]){
+                condition = true;
+            }
+            else{
+                condition = false;
+            }
+        }
+    }
+
+    if(condition_str.find("==") != string::npos){
+        if(value_vec[search(condition_left, name_vec)] == value_vec[search(condition_left, name_vec)]){
+            condition = true;
+        }
+        else{
+            condition = false;
+        }
+    }
+
+    if(condition){
+        calculate(then_str, name_vec, value_vec, is_double);
+    }
+    else{
+        calculate(else_str, name_vec, value_vec, is_double);
+    }
 
 }
 
